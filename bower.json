@@ -1,0 +1,17 @@
+{
+  "name": "datastore-rpc",
+  "version": "0.2.3",
+  "description": "CNN DataStore JavaScript Client for Node.js or browser",
+  "authors": [
+    "John Murphy-Teixidor <johnvmt@gmail.com>"
+  ],
+  "license": "MIT",
+  "main": "./lib/NodeRouter.js",
+  "keywords": [],
+  "ignore": [
+    "**/.*",
+    "bower_components"
+  ],
+  "dependencies": {
+  }
+}
