@@ -21,9 +21,21 @@ var router2 = require('./lib/NodeRouter')();
 router1.addConnection(link.connection1);
 router2.addConnection(link.connection2);
 
-console.log(router1._routeTable.modifyRoutes({
+console.log("op1", router1._routeTable.modifyRoutesCostChange({
 	delete: ['aaaa', 'aaaa-1'],
 	insert: [{dest: 'aa', cost: 2}, {dest: 'aa-1', cost: 3}]
+}, link.connection1));
+
+console.log("op2", router1._routeTable.modifyRoutesCostChange({
+	insert: [{dest: 'aa', cost: 3}]
+}, link.connection1));
+
+console.log("op3", router1._routeTable.modifyRoutesCostChange({
+	insert: [{dest: 'aa', cost: 1}]
+}, link.connection1));
+
+console.log("op4", router1._routeTable.modifyRoutesCostChange({
+	delete: ['aa']
 }, link.connection1));
 
 console.log(router1._routeTable.table.trie);
