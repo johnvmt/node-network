@@ -10,7 +10,8 @@
     "email": "johnvmt@gmail.com"
   },
   "dependencies": {
-    "event-emitter": "0.3.x"
+    "wolfy87-eventemitter": "5.1.x",
+    "agnostic-rpc": "0.0.x"
   },
   "devDependencies": {
     "browserify": "11.2.x",
@@ -19,7 +20,7 @@
   "scripts": {
     "prepublish": "node ./browserify.js"
   },
-  "main": "./lib/NodeRouter.js",
+  "main": "index.js",
   "readme": "Create a network of inidividually-addressed nodes, linked by arbitrary transports",
   "license": "MIT"
 }

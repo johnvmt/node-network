@@ -13,14 +13,63 @@ console.log(trie.removeNode(['aaaa']));
 console.log(JSON.stringify(trie.trie));
 */
 
-var link = require('./lib/VirtualLink')();
+// Create DS
+var router_ds = require('./lib/NodeRouter')({address: 'dsnyc1', _id: "dsnyc1"});
 
-var router1 = require('./lib/NodeRouter')({address: 'aaaa'});
-var router2 = require('./lib/NodeRouter')();
+// Create DS-1, Link to DS
+var router_ds_1 = require('./lib/NodeRouter')({_id: "dsnyc1-1"});
 
-router1.addConnection(link.connection1);
-router2.addConnection(link.connection2);
+var link_ds_ds_1 = require('./lib/VirtualLink')();
+router_ds.addConnection(link_ds_ds_1.connection1);
+router_ds_1.addConnection(link_ds_ds_1.connection2);
 
+// Create DS-1-1, Link to DS-1
+var router_ds_1_1 = require('./lib/NodeRouter')({_id: "dsnyc1-1-1"});
+var link_ds_1_ds_1_1 = require('./lib/VirtualLink')();
+router_ds_1.addConnection(link_ds_1_ds_1_1.connection1);
+router_ds_1_1.addConnection(link_ds_1_ds_1_1.connection2);
+
+
+
+// Create DS2, Link to DS1
+var router_ds2 = require('./lib/NodeRouter')({address: 'dsnyc2'});
+var link_ds_ds2 = require('./lib/VirtualLink')();
+router_ds2.addConnection(link_ds_ds2.connection1);
+router_ds.addConnection(link_ds_ds2.connection2);
+
+console.log("R1-ADR", router_ds.address);
+console.log("R2-ADR", router_ds_1.address);
+console.log("R3-ADR", router_ds_1_1.address);
+console.log("R4-ADR", router_ds2.address);
+
+router_ds._setAddress("dsnyc3");
+
+//console.log(router_ds2._routeTable.toRouteOperations());
+console.log('--------------------------------');
+
+router_ds_1_1.on('message', function(message) {
+	console.log("MSG ARRIVED", message);
+});
+
+router_ds2.send('dsnyc1-1-1', "MYMESSAGE");
+
+/*
+console.log("op1", router1._routeTable.modifyRoutes({
+	delete: ['aaaa', 'aaaa-1'],
+	insert: [{dest: 'aa', cost: 2}, {dest: 'aa-1', cost: 3}]
+}, link.connection1));
+
+//console.log("MINCOST", router1._routeTable.routeMinCostConnection('aa-1'));
+
+//console.log(router1._routeTable.table.trie);
+
+console.log("op2", router1._routeTable.removeConnectionRoutes(link.connection1));
+
+console.log(router1._routeTable.table.trie);
+
+//console.log(router1._routeTable.table.trie['children']['aa']['data']);
+
+/*
 console.log("op1", router1._routeTable.modifyRoutesCostChange({
 	delete: ['aaaa', 'aaaa-1'],
 	insert: [{dest: 'aa', cost: 2}, {dest: 'aa-1', cost: 3}]
