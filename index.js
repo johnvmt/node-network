@@ -1,1 +1,1 @@
-module.exports = require('./lib/NodeRouter');
+module.exports = require('./lib2/NodeRouter');

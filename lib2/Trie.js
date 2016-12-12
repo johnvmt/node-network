@@ -5,172 +5,50 @@ function Trie() {
 	this.trie = {};
 }
 
-Trie.prototype.childrenOf = function(pathKeys) {
-	var trieNode = this.trie;
+
+// TODO add accessor function
+
+/**
+ * Get node data at the spcified path, if it exists
+ * @param pathKeys
+ */
+Trie.prototype.get = function(pathKeys) {
+	var node = this.getNode(pathKeys);
+	return typeof node == 'object' && typeof node.data != 'undefined' ? node.data : undefined;
+};
+
+/**
+ * Get a specified node or return undefined if it does not exist
+ * @param pathKeys
+ */
+Trie.prototype.getNode = function(pathKeys) {
+	var trieNode = this.trie; // start at root
 	for(var index in pathKeys) { // loop over keys
 		if(typeof trieNode['children'] != 'object' || typeof trieNode['children'][pathKeys[index]] != 'object') // reached end of tree
 			return;
 		trieNode = trieNode['children'][pathKeys[index]]; // descend into child node
 	}
-
-	return trieNode['children'];
+	return trieNode;
 };
 
 /**
- * Add a node's
+ * Set node data, will create the node if it does not exist
  * @param pathKeys
- * @param data
+ * @param nodeData
  */
-Trie.prototype.add = function(pathKeys, data) {
+Trie.prototype.set = function(pathKeys, nodeData) {
 	var trieNode = this.trie;
 	for(var index in pathKeys) {
-		if(typeof trieNode['children'] != 'object')
+		if(typeof trieNode['children'] != 'object') // create child object in node, if it does not exist
 			trieNode['children'] = {};
 
-		if(typeof trieNode['children'][pathKeys[index]] != 'object')
+		if(typeof trieNode['children'][pathKeys[index]] != 'object') // create child node
 			trieNode['children'][pathKeys[index]] = {};
 
 		trieNode = trieNode['children'][pathKeys[index]];
 	}
 
-	trieNode.data = data;
-};
-
-/**
- * Get data from node at specified path
- * @param pathKeys
- * @returns {*}
- */
-Trie.prototype.search = function(pathKeys) {
-	var searchNode = this.searchNode(pathKeys);
-	return typeof searchNode == 'undefined' ? undefined : searchNode.data;
-};
-
-/**
- * Get node at specified path
- * @param pathKeys
- * @returns {undefined}
- */
-Trie.prototype.searchNode = function(pathKeys) {
-	var closestNode = this.closestNode(pathKeys);
-	return (typeof closestNode != 'undefined' && closestNode.path.length == pathKeys.length) ? closestNode.node : undefined;
-};
-/**
- * Traverse all the nodes beneath rootNode (or the root of the trie, if rootNode is undefined)
- * @param callback
- * @param [rootNode]
- * @param [rootNodePath]
- */
-Trie.prototype.traverseNodes = function(callback, rootNode, rootNodePathKeys) {
-	if(!Array.isArray(rootNodePathKeys))
-		var rootNodePathKeys = [];
-
-	if(typeof rootNode != 'object')
-		var rootNode = this.trie;
-
-	callback(rootNode, rootNodePathKeys);
-	if(typeof rootNode.children) {
-		var childKey;
-		for(childKey in rootNode.children) {
-			if (rootNode.children.hasOwnProperty(childKey))
-				this.traverseNodes(callback, rootNode.children[childKey], rootNodePathKeys.concat(childKey));
-		}
-	}
-};
-
-/**
- * Traverse all the nodes beneath rootNode (or the root of the trie, if rootNode is undefined), which contain data
- * @param callback
- * @param [rootNode]
- * @param [rootNodePath]
- */
-Trie.prototype.traverseNodesData = function(callback, rootNode, rootNodePathKeys) {
-	this.traverseNodes(function (node, nodePathKeys) {
-		if(typeof node.data != 'undefined')
-			callback(node.data, nodePathKeys);
-	}, rootNode, rootNodePathKeys);
-};
-
-/**
- * Get data from node in specified path at or closest to end of path, where node must contain data
- * @param pathKeys
- * @returns {object}
- */
-Trie.prototype.closest = function(pathKeys) {
-	var closestNode = this.closestNode(pathKeys);
-	return typeof closestNode == 'undefined' ? undefined : {path: closestNode.path, data: closestNode.node.data};
-};
-
-/**
- * Get node in given path at or closest to end of path, where node must contain data
- * @param pathKeys
- * @returns {undefined}
- */
-Trie.prototype.closestNode = function(pathKeys) {
-	var matched = undefined;
-	this.pathForEach(pathKeys, function(matchedNode, matchedNodePath) {
-		if(typeof matchedNode.data != 'undefined')
-			matched = {path: matchedNodePath, node: matchedNode};
-	});
-	return matched;
-};
-
-/**
- * Get data from all nodes in path that contain data
- * @param pathKeys
- * @returns {Array}
- */
-Trie.prototype.inPath = function(pathKeys) {
-	var matches = [];
-	this.pathForEach(pathKeys, function(matchedNode, matchedNodePath) {
-		if(typeof matchedNode.data != 'undefined')
-			matches.push({path: matchedNodePath, data: matchedNode.data});
-	});
-	return matches;
-};
-
-/**
- * Get all nodes in path that contain data
- * @param pathKeys
- * @returns {Array}
- */
-Trie.prototype.inPathNodes = function(pathKeys) {
-	var matches = [];
-	this.pathForEach(pathKeys, function(matchedNode, matchedNodePath) {
-		if(typeof matchedNode.data != 'undefined')
-			matches.push({path: matchedNodePath, node: matchedNode});
-	});
-	return matches;
-};
-
-/**
- * Trigger callback on each node in the path
- * @param pathKeys
- * @param callback
- */
-Trie.prototype.pathForEach = function(pathKeys, callback) {
-	var trieNode = this.trie; // start at root
-	callback(trieNode, []);
-
-	for(var index in pathKeys) { // loop over keys
-		if(typeof trieNode['children'] != 'object' || typeof trieNode['children'][pathKeys[index]] != 'object') // reached end of tree
-			return;
-		trieNode = trieNode['children'][pathKeys[index]]; // descend into child node
-		callback(trieNode, pathKeys.slice(0, index + 1));
-	}
-};
-
-/**
- * Get all nodes in path, including those that contain no data
- * @param pathKeys
- * @returns {Array}
- */
-Trie.prototype.inPathNodesEmpty = function(pathKeys) {
-	var matches = [];
-	this.pathForEach(pathKeys, function(matchedNode, matchedNodePath) {
-		matches.push({path: matchedNodePath, node: matchedNode});
-	});
-	return matches;
+	trieNode.data = nodeData;
 };
 
 /**
@@ -236,6 +114,148 @@ Trie.prototype.removeNode = function(pathKeys) {
 	}
 
 	return true;
+};
+
+/**
+ * Traverse all the nodes beneath rootNode (or the root of the trie, if rootNode is undefined)
+ * @param callback
+ * @param [rootNode]
+ * @param [rootNodePath]
+ */
+Trie.prototype.traverseNodes = function(callback, rootNode, rootNodePathKeys) {
+	if(!Array.isArray(rootNodePathKeys))
+		var rootNodePathKeys = [];
+
+	if(typeof rootNode != 'object')
+		var rootNode = this.trie;
+
+	callback(rootNode, rootNodePathKeys);
+	if(typeof rootNode.children) {
+		var childKey;
+		for(childKey in rootNode.children) {
+			if (rootNode.children.hasOwnProperty(childKey))
+				this.traverseNodes(callback, rootNode.children[childKey], rootNodePathKeys.concat(childKey));
+		}
+	}
+};
+
+/**
+ * Traverse all the nodes beneath rootNode (or the root of the trie, if rootNode is undefined), which contain data
+ * @param callback
+ * @param [rootNode]
+ * @param [rootNodePath]
+ */
+Trie.prototype.traverseNodesData = function(callback, rootNode, rootNodePathKeys) {
+	this.traverseNodes(function (node, nodePathKeys) {
+		if(typeof node.data != 'undefined')
+			callback(node.data, nodePathKeys);
+	}, rootNode, rootNodePathKeys);
+};
+
+/**
+ * Get data from node in specified path at or closest to end of path, where node must contain data
+ * @param pathKeys
+ * @returns {object}
+ */
+Trie.prototype.closest = function(pathKeys) {
+	var closestNode = this.closestNode(pathKeys);
+	return typeof closestNode == 'undefined' ? undefined : {path: closestNode.path, data: closestNode.node.data};
+};
+
+/**
+ * Get node in given path at or closest to end of path, where node must contain data
+ * @param pathKeys
+ * @returns {undefined}
+ */
+Trie.prototype.closestNode = function(pathKeys) {
+	var matched = undefined;
+	this.pathForEach(pathKeys, function(matchedNode, matchedNodePath) {
+		if(typeof matchedNode.data != 'undefined')
+			matched = {path: matchedNodePath, node: matchedNode};
+	});
+	return matched;
+};
+
+/**
+ * Get path of closest node to end of path, where node must contain data
+ * @param pathKeys
+ * @returns {undefined}
+ */
+Trie.prototype.closestPath = function(pathKeys) {
+	var matchedPath = undefined;
+	this.pathForEach(pathKeys, function(matchedNode, matchedNodePath) {
+		if(typeof matchedNode.data != 'undefined')
+			matchedPath = matchedNodePath;
+	});
+	return matchedPath;
+};
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Get data from all nodes in path that contain data
+ * @param pathKeys
+ * @returns {Array}
+ */
+Trie.prototype.inPath = function(pathKeys) {
+	var matches = [];
+	this.pathForEach(pathKeys, function(matchedNode, matchedNodePath) {
+		if(typeof matchedNode.data != 'undefined')
+			matches.push({path: matchedNodePath, data: matchedNode.data});
+	});
+	return matches;
+};
+
+/**
+ * Get all nodes in path that contain data
+ * @param pathKeys
+ * @returns {Array}
+ */
+Trie.prototype.inPathNodes = function(pathKeys) {
+	var matches = [];
+	this.pathForEach(pathKeys, function(matchedNode, matchedNodePath) {
+		if(typeof matchedNode.data != 'undefined')
+			matches.push({path: matchedNodePath, node: matchedNode});
+	});
+	return matches;
+};
+
+/**
+ * Trigger callback on each node in the path
+ * @param pathKeys
+ * @param callback
+ */
+Trie.prototype.pathForEach = function(pathKeys, callback) {
+	var trieNode = this.trie; // start at root
+	callback(trieNode, []);
+
+	for(var index in pathKeys) { // loop over keys
+		if(typeof trieNode['children'] != 'object' || typeof trieNode['children'][pathKeys[index]] != 'object') // reached end of tree
+			return;
+		trieNode = trieNode['children'][pathKeys[index]]; // descend into child node
+		callback(trieNode, pathKeys.slice(0, index + 1));
+	}
+};
+
+/**
+ * Get all nodes in path, including those that contain no data
+ * @param pathKeys
+ * @returns {Array}
+ */
+Trie.prototype.inPathNodesEmpty = function(pathKeys) {
+	var matches = [];
+	this.pathForEach(pathKeys, function(matchedNode, matchedNodePath) {
+		matches.push({path: matchedNodePath, node: matchedNode});
+	});
+	return matches;
 };
 
 module.exports = function() {

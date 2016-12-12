@@ -4,21 +4,6 @@ var RouteTable = require('./RouteTable');
 var AddressManager = require('./AddressManager');
 var Utils = require('./Utils');
 
-/*
-Do not advertise children; just advertise self
-
-AAAA (advertise AAAA*)
-AAAA-1111, connected to BBBB-1111 (advertise AAAA-1111(0), AAAA(1))
-BBBB
-
-Advertise self with cost 0, do not advertise subnets of self
-Only advertise on changes, when changes involve min cost through this router changing (or route disappearing)
-
-What happens when we have BBBB/3 and BBBB-1/4?
-Calculate if we have shorter path to prent of av
-
-*/
-
 function NodeRouter(config) {
 	if(typeof config != 'object')
 		config = {};
@@ -33,6 +18,9 @@ function NodeRouter(config) {
 	router._setAddress(this.config.address); // will set even if address is undefined
 
 	router._actions = {
+		ping: function(query, connection, callback) {
+			callback(null, true);
+		},
 		route: function(packet, connection, callback) {
 			router._route(packet, callback);
 		},
@@ -41,13 +29,15 @@ function NodeRouter(config) {
 				router._setAddress(query.address);
 		},
 		addressrequest: function(query, connection, callback) {
+			// TODO check if router address is set
 
-			var allocate = router._addressManager.allocate();
+			var childAddress = router._addressManager.allocate();
 			//console.log("ADDR-REQ at", router.address, "ALLOCATING", allocate);
-			callback(null, allocate);
+			callback(null, childAddress);
 		},
 		routesupdate: function(routeOperations, connection) {
 			if(Array.isArray(routeOperations.insert)) {
+				// TODO check whether routeOperations.insert exists
 				// Remove own address
 				routeOperations.insert = routeOperations.insert.filter(function(insertOp) {
 					return insertOp.address != router.address;
@@ -125,6 +115,8 @@ NodeRouter.prototype.addConnection = function(connection) {
 			console.log(error);
 		}
 	});
+
+	// TODO add disconnection behavior
 
 	connection.connect(function() {
 

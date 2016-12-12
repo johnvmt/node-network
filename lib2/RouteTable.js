@@ -6,9 +6,7 @@ function RouteTable(config) {
 }
 
 RouteTable.prototype.childRoutes = function(parentAddress) {
-	var parentRouteKeys = parentAddress.split('-');
-
-	return this.table.childrenOf(parentRouteKeys);;
+	return this.table.childrenOf(parentAddress);
 
 	// TODO change to return node data
 	if(typeof parentNode.children == 'object')
