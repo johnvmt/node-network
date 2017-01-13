@@ -32,7 +32,7 @@ router_ds_1_1.addConnection(link_ds_1_ds_1_1.connection2);
 
 
 // Create DS2, Link to DS1
-var router_ds2 = require('./lib/NodeRouter')({address: 'dsnyc2'});
+var router_ds2 = require('./lib/NodeRouter')({address: 'dsnyc2', _id: "dsnyc2"});
 var link_ds_ds2 = require('./lib/VirtualLink')();
 router_ds2.addConnection(link_ds_ds2.connection1);
 router_ds.addConnection(link_ds_ds2.connection2);
@@ -42,7 +42,7 @@ console.log("R2-ADR", router_ds_1.address);
 console.log("R3-ADR", router_ds_1_1.address);
 console.log("R4-ADR", router_ds2.address);
 
-router_ds._setAddress("dsnyc3");
+
 
 //console.log(router_ds2._routeTable.toRouteOperations());
 console.log('--------------------------------');
@@ -52,6 +52,20 @@ router_ds_1_1.on('message', function(message) {
 });
 
 router_ds2.send('dsnyc1-1-1', "MYMESSAGE");
+
+router_ds.setAddress("ds3");
+
+console.log("R1-ADR", router_ds.address);
+console.log("R2-ADR", router_ds_1.address);
+console.log("R3-ADR", router_ds_1_1.address);
+console.log("R4-ADR", router_ds2.address);
+
+console.log('--------------------------------');
+
+console.log(JSON.stringify(router_ds2._routeTable.toRouteOperations()));
+
+router_ds2.send('ds3-1-1', "MYMESSAGE");
+
 
 /*
 console.log("op1", router1._routeTable.modifyRoutes({
