@@ -1,39 +1,51 @@
-/**
- * Created by jmurphy on 8/13/16.
- */
-/*
-var trie = require('./lib/Trie')();
-
-//trie.add(['aaaa'], "aaaa");
-trie.add(['aaaa', '1'], "aaaa-1");
-trie.add(['bbbb', '1'], "bbbb-1");
-trie.add([], "root");
-
-console.log(trie.removeNode(['aaaa']));
-console.log(JSON.stringify(trie.trie));
-*/
-
 // Create DS
 var router_ds = require('./lib/NodeRouter')({address: 'dsnyc1', _id: "dsnyc1"});
 
 // Create DS-1, Link to DS
 var router_ds_1 = require('./lib/NodeRouter')({_id: "dsnyc1-1"});
 
-var link_ds_ds_1 = require('./lib/VirtualLink')();
+var link_ds_ds_1 = require('./lib/VirtualLink')()
+
 router_ds.addConnection(link_ds_ds_1.connection1);
 router_ds_1.addConnection(link_ds_ds_1.connection2);
+
+link_ds_ds_1.connection1.connect();
+link_ds_ds_1.connection2.connect();
+
+router_ds.on('message', function(message) {
+	console.log("MSG ARRIVED", message);
+});
+
+
 
 // Create DS-1-1, Link to DS-1
 var router_ds_1_1 = require('./lib/NodeRouter')({_id: "dsnyc1-1-1"});
 var link_ds_1_ds_1_1 = require('./lib/VirtualLink')();
+
+
+
+/*router_ds_1.on('address', function(address) {
+	console.log("ROUTER 1-1 ADDRESS", address);
+});*/
+
 router_ds_1.addConnection(link_ds_1_ds_1_1.connection1);
 router_ds_1_1.addConnection(link_ds_1_ds_1_1.connection2);
 
+link_ds_1_ds_1_1.connection1.connect();
+link_ds_1_ds_1_1.connection2.connect();
 
+router_ds_1_1.send('dsnyc1', "MYMESSAGE");
+router_ds.send('dsnyc1-1-1', "MYMESSAGE");
+
+/*
 
 // Create DS2, Link to DS1
 var router_ds2 = require('./lib/NodeRouter')({address: 'dsnyc2', _id: "dsnyc2"});
 var link_ds_ds2 = require('./lib/VirtualLink')();
+
+link_ds_ds2.connection1.connect();
+link_ds_ds2.connection2.connect();
+
 router_ds2.addConnection(link_ds_ds2.connection1);
 router_ds.addConnection(link_ds_ds2.connection2);
 
@@ -42,7 +54,7 @@ console.log("R2-ADR", router_ds_1.address);
 console.log("R3-ADR", router_ds_1_1.address);
 console.log("R4-ADR", router_ds2.address);
 
-
+router_ds.send('dsnyc1-1', "MYMESSAGE");
 
 //console.log(router_ds2._routeTable.toRouteOperations());
 console.log('--------------------------------');
@@ -51,7 +63,9 @@ router_ds_1_1.on('message', function(message) {
 	console.log("MSG ARRIVED", message);
 });
 
+console.log("SEND 2");
 router_ds2.send('dsnyc1-1-1', "MYMESSAGE");
+console.log("SEND 2 END");
 
 router_ds.setAddress("ds3");
 

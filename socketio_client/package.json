@@ -1,0 +1,25 @@
+{
+  "name": "node-network-socketio-client",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnvmt/node-network.git"
+  },
+  "author": {
+    "name": "John Murphy-Teixidor",
+    "email": "johnvmt@gmail.com"
+  },
+  "dependencies": {
+    "socket.io-client": "1.7.x"
+  },
+  "devDependencies": {
+    "browserify": "11.2.x",
+    "minifyify": "7.3.x"
+  },
+  "scripts": {
+    "prepublish": "node ./browserify.js"
+  },
+  "main": "index.js",
+  "readme": "Create a network of inidividually-addressed nodes, linked by arbitrary transports",
+  "license": "MIT"
+}
