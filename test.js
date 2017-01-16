@@ -34,8 +34,13 @@ router_ds_1_1.addConnection(link_ds_1_ds_1_1.connection2);
 link_ds_1_ds_1_1.connection1.connect();
 link_ds_1_ds_1_1.connection2.connect();
 
-router_ds_1_1.send('dsnyc1', "MYMESSAGE");
-router_ds.send('dsnyc1-1-1', "MYMESSAGE");
+// Allow for address to be set
+process.nextTick(function() {
+	router_ds_1_1.send('dsnyc1', "MYMESSAGE");
+	router_ds.send('dsnyc1-1-1', "MYMESSAGE");
+});
+
+
 
 /*
 

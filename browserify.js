@@ -12,7 +12,6 @@ b.add(inFile);
 
 b.plugin('minifyify', {map: mapFile});
 
-//b.ignore('request');
 b.bundle(function (err, src, map) {
 	fs.writeFileSync(mapFile, map);
 
