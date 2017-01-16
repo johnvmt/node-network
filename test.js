@@ -4,7 +4,7 @@ var router_ds = require('./lib/NodeRouter')({address: 'dsnyc1', _id: "dsnyc1"});
 // Create DS-1, Link to DS
 var router_ds_1 = require('./lib/NodeRouter')({_id: "dsnyc1-1"});
 
-var link_ds_ds_1 = require('./lib/VirtualLink')()
+var link_ds_ds_1 = require('./lib/VirtualLink')();
 
 router_ds.addConnection(link_ds_ds_1.connection1);
 router_ds_1.addConnection(link_ds_ds_1.connection2);
@@ -33,7 +33,7 @@ var link_ds_1_ds_1_1 = require('./lib/VirtualLink')();
 
 
 
-/*router_ds_1.on('address', function(address) {
+router_ds_1.on('address', function(address) {
 	console.log("ROUTER 1-1 ADDRESS", address);
 });
 
@@ -47,8 +47,6 @@ link_ds_1_ds_1_1.connection2.connect();
 
 
 
-/*
-
 // Create DS2, Link to DS1
 var router_ds2 = require('./lib/NodeRouter')({address: 'dsnyc2', _id: "dsnyc2"});
 var link_ds_ds2 = require('./lib/VirtualLink')();
@@ -59,12 +57,16 @@ link_ds_ds2.connection2.connect();
 router_ds2.addConnection(link_ds_ds2.connection1);
 router_ds.addConnection(link_ds_ds2.connection2);
 
-console.log("R1-ADR", router_ds.address);
-console.log("R2-ADR", router_ds_1.address);
-console.log("R3-ADR", router_ds_1_1.address);
-console.log("R4-ADR", router_ds2.address);
+process.nextTick(function() {
+	console.log("R1-ADR", router_ds.address);
+	console.log("R2-ADR", router_ds_1.address);
+	console.log("R3-ADR", router_ds_1_1.address);
+	console.log("R4-ADR", router_ds2.address);
 
-router_ds.send('dsnyc1-1', "MYMESSAGE");
+	router_ds.send('dsnyc1-1', "MYMESSAGE", function (error, arrived) {
+		console.log("--ARRIVED--", error, arrived);
+	});
+});
 
 //console.log(router_ds2._routeTable.toRouteOperations());
 console.log('--------------------------------');
