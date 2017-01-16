@@ -16,6 +16,15 @@ router_ds.on('message', function(message) {
 	console.log("MSG ARRIVED", message);
 });
 
+router_ds_1.on('message', function(message) {
+	console.log("MSG ARRIVED", message);
+});
+
+// Allow for address to be set
+process.nextTick(function() {
+	router_ds_1.send('dsnyc1', "MYMESSAGE");
+	router_ds.send('dsnyc1-1', "MYMESSAGE");
+});
 
 
 // Create DS-1-1, Link to DS-1
@@ -26,7 +35,7 @@ var link_ds_1_ds_1_1 = require('./lib/VirtualLink')();
 
 /*router_ds_1.on('address', function(address) {
 	console.log("ROUTER 1-1 ADDRESS", address);
-});*/
+});
 
 router_ds_1.addConnection(link_ds_1_ds_1_1.connection1);
 router_ds_1_1.addConnection(link_ds_1_ds_1_1.connection2);
@@ -34,11 +43,7 @@ router_ds_1_1.addConnection(link_ds_1_ds_1_1.connection2);
 link_ds_1_ds_1_1.connection1.connect();
 link_ds_1_ds_1_1.connection2.connect();
 
-// Allow for address to be set
-process.nextTick(function() {
-	router_ds_1_1.send('dsnyc1', "MYMESSAGE");
-	router_ds.send('dsnyc1-1-1', "MYMESSAGE");
-});
+
 
 
 
