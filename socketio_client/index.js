@@ -1,5 +1,25 @@
+var rpc = require('datastore-rpc')();
 var io = require('socket.io-client');
 
+rpc.router.use('/path', function(request, respond, next) {
+	console.log("Router 1 request");
+	respond("error", "response");
+	respond("error2", "response2");
+});
+
+rpc.once('connect', function() {
+	rpc.request('dsnyc1', '/api/ping', {key: "val"}, {multipleResponses: false}, function(error, response) {
+		console.log("RESPONSE", error, response);
+	});
+
+});
+
+var socket = io('http://localhost:8005');
+
+rpc.addConnection(socket);
+
+
+/*
 var router = require('../lib/NodeRouter')({});
 
 router.on('message', function(message) {
@@ -11,9 +31,7 @@ router.on('address', function(address) {
 	router.send('dsnyc1', "MYMESSAGE22");
 });
 
-var socket = io('http://localhost:8000');
 
-router.addConnection(socket);
 
 /*
 socket.on('connect', function(){

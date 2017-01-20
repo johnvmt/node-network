@@ -1,7 +1,7 @@
 // Runs from npm install
 var inFile = './index.js';
-var outFile = './nodeNetwork.min.js';
-var standalone = 'nodeNetwork';
+var outFile = './nodenetwork.min.js';
+var standalone = 'nodenetwork';
 var mapFile = standalone + '.js.map';
 
 var fs = require('fs');
