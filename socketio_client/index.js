@@ -1,6 +1,8 @@
-var rpc = require('datastore-rpc')();
+
 var io = require('socket.io-client');
 
+/*
+var rpc = require('datastore-rpc')();
 rpc.router.use('/path', function(request, respond, next) {
 	console.log("Router 1 request");
 	respond("error", "response");
@@ -13,13 +15,10 @@ rpc.once('connect', function() {
 	});
 
 });
+*/
 
 var socket = io('http://localhost:8005');
 
-rpc.addConnection(socket);
-
-
-/*
 var router = require('../lib/NodeRouter')({});
 
 router.on('message', function(message) {
@@ -28,8 +27,10 @@ router.on('message', function(message) {
 
 router.on('address', function(address) {
 	console.log("Address set", address);
-	router.send('dsnyc1', "MYMESSAGE22");
+	//router.send('dsnyc1', "MYMESSAGE22");
 });
+
+router.addConnection(socket);
 
 
 
