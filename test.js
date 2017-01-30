@@ -90,7 +90,7 @@ console.log('--------------------------------');
 
 console.log(JSON.stringify(router_ds2._routeTable.toRouteOperations()));
 
-router_ds2.send('ds3-1-1', "MYMESSAGE");
+router_ds2.send(['ds3-1-1', 'ds3-1'], "MYMESSAGE");
 
 
 /*
