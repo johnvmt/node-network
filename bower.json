@@ -1,7 +1,7 @@
 {
-  "name": "datastore-rpc",
-  "version": "0.2.3",
-  "description": "CNN DataStore JavaScript Client for Node.js or browser",
+  "name": "node-network",
+  "version": "0.0.2",
+  "description": "Create a network of inidividually-addressed nodes, linked by arbitrary transport",
   "authors": [
     "John Murphy-Teixidor <johnvmt@gmail.com>"
   ],
