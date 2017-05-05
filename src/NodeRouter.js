@@ -14,6 +14,15 @@ function NodeRouter(config) {
 
 	router._routeTable = RouteTable();
 
+	router._routeTable.on('insert', function(insertOperation) {
+		var emitOperation = {address: insertOperation.address.join('-'), cost: insertOperation.cost};
+		router.emit('insert', emitOperation);
+	});
+
+	router._routeTable.on('remove', function(addressParts) {
+		router.emit('remove', addressParts.join('-'));
+	});
+
 	router._connections = {};
 	router._connectionKeyMax = -1; // increase every time a connection is added
 
@@ -123,25 +132,6 @@ NodeRouter.prototype.setAddress = function(addressJoined, addressConnectionKey) 
 
 NodeRouter.prototype._broadcastRouteOperations = function(routeOperations) {
 	var router = this;
-	Utils.objectForEach(routeOperations, function(operationTypeOperations, operationType) {
-		//var operationEventName = 'route' + operationType.charAt(0).toUpperCase() + operationType.slice(1);
-		operationTypeOperations.forEach(function(operationTypeOperation) {
-			//console.log("OEN", operationEventName);
-			switch(operationType) {
-				case 'insert':
-					var operationTypeEmit = {address: operationTypeOperation.address.join('-'), cost: operationTypeOperation.cost};
-					break;
-				case 'remove':
-					var operationTypeEmit = operationTypeOperation.join('-');
-					break;
-				default:
-					var operationTypeEmit = operationTypeOperation;
-					break;
-			}
-			router.emit(operationType, operationTypeEmit);
-		});
-	});
-
 	Utils.objectForEach(router._connections, function(connectionConfig, connectionKey) {
 		// TODO filter for each connection
 		router.rpcRequest(connectionKey, 'routesupdate', routeOperations);

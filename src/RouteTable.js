@@ -1,5 +1,6 @@
 var Utils = require('./Utils');
 var Tree = require('./Trie');
+var EventEmitter = require('wolfy87-eventemitter');
 
 function RouteTable(config) {
 	this.table = Tree();
@@ -19,6 +20,8 @@ RouteTable.prototype.toRouteOperations = function(filter) {
 
 	return routeOperationsInsert.length == 0 ? {} : {insert: routeOperationsInsert};
 };
+
+RouteTable.prototype.__proto__ = EventEmitter.prototype;
 
 /**
  * Get immediate children of parent
@@ -75,6 +78,7 @@ RouteTable.prototype.modifyRoutes = function(routeOperations, connectionKey) {
 					operationsCompleted.remove = [];
 				if(operationsCompleted.remove.indexOf(destAddress) < 0)
 					operationsCompleted.remove.push(destAddress);
+				routeTable.emit('remove', destAddress);
 			}
 		});
 	}
@@ -86,6 +90,7 @@ RouteTable.prototype.modifyRoutes = function(routeOperations, connectionKey) {
 					operationsCompleted.insert = [];
 				if(operationsCompleted.insert.indexOf(insertRoute) < 0)
 					operationsCompleted.insert.push(insertRoute);
+				routeTable.emit('insert', insertRoute);
 			}
 		});
 	}
