@@ -15,6 +15,13 @@ function VirtualConnection() {
 	});
 }
 
+VirtualConnection.prototype.disconnect = function() {
+	if(this.connected) {
+		this.connected = false;
+		this._emitter.emit('disconnect');
+	}
+};
+
 VirtualConnection.prototype.connect = function(callback) {
 	this._connectionRequested = true;
 	if(this.connected) {
@@ -67,6 +74,14 @@ module.exports = function() {
 			connection1._emitter.emit('connect');
 			connection2._emitter.emit('connect');
 		}
+	});
+
+	connection2.on('disconnect', function() {
+		connection1.disconnect();
+	});
+
+	connection1.on('disconnect', function() {
+		connection2.disconnect();
 	});
 
 	connection1.on('connectionRequest', function() {

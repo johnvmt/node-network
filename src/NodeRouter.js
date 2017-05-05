@@ -123,6 +123,25 @@ NodeRouter.prototype.setAddress = function(addressJoined, addressConnectionKey) 
 
 NodeRouter.prototype._broadcastRouteOperations = function(routeOperations) {
 	var router = this;
+	Utils.objectForEach(routeOperations, function(operationTypeOperations, operationType) {
+		//var operationEventName = 'route' + operationType.charAt(0).toUpperCase() + operationType.slice(1);
+		operationTypeOperations.forEach(function(operationTypeOperation) {
+			//console.log("OEN", operationEventName);
+			switch(operationType) {
+				case 'insert':
+					var operationTypeEmit = {address: operationTypeOperation.address.join('-'), cost: operationTypeOperation.cost};
+					break;
+				case 'remove':
+					var operationTypeEmit = operationTypeOperation.join('-');
+					break;
+				default:
+					var operationTypeEmit = operationTypeOperation;
+					break;
+			}
+			router.emit(operationType, operationTypeEmit);
+		});
+	});
+
 	Utils.objectForEach(router._connections, function(connectionConfig, connectionKey) {
 		// TODO filter for each connection
 		router.rpcRequest(connectionKey, 'routesupdate', routeOperations);
@@ -277,15 +296,14 @@ NodeRouter.prototype.addConnection = function(connection, connectionOptions) {
 	});
 
 	connection.on('disconnect', function() {
-
 		if(router.addressConnectionKey == connectionKey) // Address was provided by this connection
 			router._setAddressParts();
 
 		var localOperations = router._routeTable.removeConnectionRoutes(connectionKey);
+
 		router._broadcastRouteOperations(localOperations);
 
 		delete router._connections[connectionKey];
-
 	});
 
 	connection.on('connect', function() {
@@ -458,8 +476,10 @@ NodeRouter.prototype._rpcMessage = function(connectionKey, message) {
 			},
 			function(responseMessage) {
 				// TODO add a single connection.emit handler
-				var connection = router._connections[connectionKey].connection;
-				connection.emit('data', responseMessage);
+				if(router._connections[connectionKey]) {
+					var connection = router._connections[connectionKey].connection;
+					connection.emit('data', responseMessage);
+				}
 			}
 		);
 	}
