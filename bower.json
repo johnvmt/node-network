@@ -1,12 +1,12 @@
 {
   "name": "node-network",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Create a network of inidividually-addressed nodes, linked by arbitrary transport",
   "authors": [
     "John Murphy-Teixidor <johnvmt@gmail.com>"
   ],
   "license": "MIT",
-  "main": "./lib/NodeRouter.js",
+  "main": "./src/NodeRouter.js",
   "keywords": [],
   "ignore": [
     "**/.*",
