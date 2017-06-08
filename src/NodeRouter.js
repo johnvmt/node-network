@@ -33,7 +33,6 @@ function NodeRouter(config) {
 		router.setAddress(router.config.address); // will set even if address is undefined
 	});
 
-
 	router._actions = {
 		ping: function(query, connection, callback) {
 			callback(null, true);
@@ -211,9 +210,7 @@ NodeRouter.prototype._setAddressParts = function(address, addressConnectionKey) 
 	router._addressManager = undefined; // unset the address manager
 
 	if(typeof router.address != 'undefined') {
-		router._addressManager = AddressManager({
-			baseAddress: router.address
-		});
+		router._addressManager = AddressManager(router.address);
 		routerOperations.insert = [{address: router.address, cost: 0}];
 	}
 
@@ -390,6 +387,7 @@ NodeRouter.prototype._route = function(packet, callback) {
 	// TODO add routing rules
 	var router = this;
 	var nextConnections = {};
+
 	// Loop over destinations to find next Connections
 	if(Array.isArray(packet.dest)) {
 		packet.dest.forEach(function(dest) {

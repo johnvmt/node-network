@@ -2,7 +2,7 @@ var Utils = require('./Utils');
 var Tree = require('./Trie');
 var EventEmitter = require('wolfy87-eventemitter');
 
-function RouteTable(config) {
+function RouteTable() {
 	this.table = Tree();
 }
 
@@ -69,8 +69,6 @@ RouteTable.prototype.modifyRoutes = function(routeOperations, connectionKey) {
 	var routeTable = this;
 	var operationsCompleted = {};
 
-	// TODO REMOVE console.log("ROPS-MOD", JSON.stringify(routeOperations));
-
 	if(Array.isArray(routeOperations.remove)) {
 		routeOperations.remove.forEach(function(destAddress) {
 			if(Array.isArray(destAddress) && routeTable.removeRoute(destAddress, connectionKey)) {
@@ -132,6 +130,6 @@ RouteTable.prototype.removeRoute = function(destAddress, connectionKey) {
 		return false;
 };
 
-module.exports = function(config) {
-	return new RouteTable(config);
+module.exports = function() {
+	return new RouteTable();
 };

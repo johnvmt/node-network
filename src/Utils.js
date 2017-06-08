@@ -29,7 +29,6 @@ Utils.objectFilter = function(object, filter) {
 	return result;
 };
 
-
 Utils.objectForEach = function(object, callback) {
 	// run function on each property (child) of object
 	var property;

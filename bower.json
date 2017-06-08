@@ -12,6 +12,9 @@
     "**/.*",
     "bower_components"
   ],
+  "scripts": {
+    "prepublish": "node ./browserify.js"
+  },
   "dependencies": {
   }
 }

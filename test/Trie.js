@@ -1,5 +1,5 @@
 var assert = require('assert');
-var trie = require('../lib2/Trie')();
+var trie = require('../src/Trie')();
 
 describe('Trie Functions', function(){
 	describe('Getters/Setters', function(){

@@ -14,12 +14,12 @@
  */
 
 // Create DS
-var router_ds = require('./lib/NodeRouter')({address: 'dsnyc1', _id: "dsnyc1"});
+var router_ds = require('./src/NodeRouter')({address: 'dsnyc1', _id: "dsnyc1"});
 
 // Create DS-1, Link to DS
-var router_ds_1 = require('./lib/NodeRouter')({_id: "dsnyc1-1"});
+var router_ds_1 = require('./src/NodeRouter')({_id: "dsnyc1-1"});
 
-var link_ds_ds_1 = require('./lib/VirtualLink')()
+var link_ds_ds_1 = require('./src/VirtualLink')()
 
 router_ds.addConnection(link_ds_ds_1.connection1);
 router_ds_1.addConnection(link_ds_ds_1.connection2);
@@ -42,8 +42,8 @@ router_ds_1.addConnection(link_ds_1_ds_1_1.connection1);
 router_ds_1_1.addConnection(link_ds_1_ds_1_1.connection2);
 
 // Create DS2, Link to DS1
-var router_ds2 = require('./lib/NodeRouter')({address: 'dsnyc2', _id: "dsnyc2"});
-var link_ds_ds2 = require('./lib/VirtualLink')();
+var router_ds2 = require('./src/NodeRouter')({address: 'dsnyc2', _id: "dsnyc2"});
+var link_ds_ds2 = require('./src/VirtualLink')();
 
 link_ds_ds2.connection1.connect();
 link_ds_ds2.connection2.connect();

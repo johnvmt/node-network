@@ -1,6 +1,6 @@
-function AddressManager(config) {
-	if(Array.isArray(config.baseAddress))
-		this._baseAddress = config.baseAddress;
+function AddressManager(baseAddress) {
+	if(Array.isArray(baseAddress))
+		this._baseAddress = baseAddress;
 	else
 		throw new Error('base_address_not_set');
 	this._max = '0';
