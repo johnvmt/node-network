@@ -16,10 +16,9 @@ b.add(inFile);
 
 b.plugin('minifyify', {map: mapFile});
 
-//b.ignore('fauxmongo');
 b.bundle(function (err, src, map) {
 	fs.writeFileSync(mapFile, map);
-	console.log("Out file: ", getFilesizeInBytes(outFile), "bytes");
+	console.log("Out file: ", outFile, getFilesizeInBytes(outFile), "bytes");
 }).pipe(fs.createWriteStream(outFile));
 
 function getFilesizeInBytes(filename) {
