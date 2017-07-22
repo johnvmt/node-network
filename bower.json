@@ -1,6 +1,6 @@
 {
   "name": "node-network",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Create a network of inidividually-addressed nodes, linked by arbitrary transport",
   "authors": [
     "John Murphy-Teixidor <johnvmt@gmail.com>"

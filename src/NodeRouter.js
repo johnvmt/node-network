@@ -1,5 +1,6 @@
 var Rpc = require('agnostic-rpc');
 var EventEmitter = require('wolfy87-eventemitter');
+var QueueEmitter = require('queue-emitter');
 var RouteTable = require('./RouteTable');
 var AddressManager = require('./AddressManager');
 var Utils = require('./Utils');
@@ -11,7 +12,7 @@ function NodeRouter(config) {
 	var router = this;
 
 	router.config = config;
-
+	router._queueEmitter = new QueueEmitter();
 	router._routeTable = RouteTable();
 
 	router._routeTable.on('insert', function(insertOperation) {
@@ -83,6 +84,20 @@ function NodeRouter(config) {
 NodeRouter.prototype.__proto__ = EventEmitter.prototype;
 
 /**
+ * Pass calls to queue emitter
+ */
+NodeRouter.prototype.queueOn = function() {
+	this._queueEmitter.on.apply(this._queueEmitter, Array.prototype.slice.call(arguments));
+};
+
+/**
+ * Pass calls to queue emitter
+ */
+NodeRouter.prototype.queueOnce = function() {
+	this._queueEmitter.once.apply(this._queueEmitter, Array.prototype.slice.call(arguments));
+};
+
+/**
  *
  * @param destAddressJoined
  * @param message
@@ -90,6 +105,8 @@ NodeRouter.prototype.__proto__ = EventEmitter.prototype;
  * @param [callback]
  */
 NodeRouter.prototype.send = function() {
+	var router = this;
+
 	var parsedArgs = Utils.parseArgs(
 		arguments,
 		[
@@ -108,11 +125,18 @@ NodeRouter.prototype.send = function() {
 		destAddresses.push(destAddressJoined.split('-'));
 	});
 
-	// TODO add options handling
-	this._route({
+	var packet = {
 		message: parsedArgs.message,
 		dest: destAddresses
-	}, parsedArgs.callback);
+	};
+
+	// TODO add options handling
+	router._queueEmitter.emit('send', packet, function(error) {
+		if(error)
+			parsedArgs.callback(error, null);
+		else
+			router._route(packet, parsedArgs.callback);
+	});
 };
 
 /**
@@ -392,9 +416,15 @@ NodeRouter.prototype._route = function(packet, callback) {
 	if(Array.isArray(packet.dest)) {
 		packet.dest.forEach(function(dest) {
 			if(typeof router._addressManager == 'object' && router._addressManager.addressIsEqual(dest)) {
-				router.emit('data', packet);
-				router.emit('message', packet.message);
-				callbackSafe(null, router.address);
+				router._queueEmitter.emit('receive', packet, function(error) {
+					if(error)
+						callbackSafe(error, router.address);
+					else {
+						router.emit('data', packet);
+						router.emit('message', packet.message);
+						callbackSafe(null, router.address);
+					}
+				});
 			}
 			else {
 				var nextConnectionKey = router._routeTable.nextConnection(dest);
