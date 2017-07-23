@@ -118,7 +118,7 @@ NodeRouter.prototype.send = function() {
 	);
 
 	// Convert to array if it is not already
-	var destAddressesJoined = Array.isArray(parsedArgs.destAddressesJoined) ? parsedArgs.destAddressesJoined : [parsedArgs.destAddressesJoined];
+	var destAddressesJoined = router.normalizeAddresses(parsedArgs.destAddressesJoined);
 
 	var destAddresses = [];
 	destAddressesJoined.forEach(function(destAddressJoined) {
@@ -137,6 +137,15 @@ NodeRouter.prototype.send = function() {
 		else
 			router._route(packet, parsedArgs.callback);
 	});
+};
+
+/**
+ * Converts single destAddress to array
+ * @param addressesJoined
+ * @returns {[null]}
+ */
+NodeRouter.prototype.normalizeAddresses = function(addressesJoined) {
+	return Array.isArray(addressesJoined) ? addressesJoined : [addressesJoined]
 };
 
 /**
