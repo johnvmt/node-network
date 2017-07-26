@@ -1,6 +1,6 @@
 {
   "name": "node-network",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/johnvmt/node-network.git"
@@ -19,9 +19,9 @@
     "minifyify": "7.3.x"
   },
   "scripts": {
-    "prepublish": "node ./browserify.js"
+    "prepublish": "node ./scripts/browserify.js"
   },
   "main": "./src/NodeRouter.js",
-  "readme": "Create a network of inidividually-addressed nodes, linked by arbitrary transports",
+  "readme": "Create a network of individually-addressed nodes, linked by arbitrary transports",
   "license": "MIT"
 }
